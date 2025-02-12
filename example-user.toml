@@ -1,0 +1,18 @@
+# https://www.osbuild.org/guides/blueprint-reference/blueprint-reference.html
+
+name = "example-user"
+
+[[customizations.sshkey]]
+user = "root"
+key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap+spam@redhat.com"
+
+[[customizations.user]]
+name = "lzap"
+key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap+spam@redhat.com"
+
+[[customizations.files]]
+path = "/etc/sudoers.d/admin"
+mode = "0440"
+data = """
+lzap ALL=(ALL) NOPASSWD: ALL
+"""

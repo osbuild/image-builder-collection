@@ -1,0 +1,35 @@
+namespace: osbuild
+name: image_builder
+version: 1.0.0
+
+readme: README.md
+authors:
+  - Marko Myllynen <myllynen@redhat.com>
+  - Lukáš Zapletal <lzap+spam@redhat.com>
+
+description: Image Builder (osbuild) is a tool and service for building and composing operating system images. This
+  module uses image-builder-cli to build images from blueprints.
+
+license:
+  - GPL-2.0-or-later
+
+tags:
+  - imagebuilder
+  - osbuild
+  - build
+  - image
+  - linux
+  - fedora
+  - rhel
+  - edge
+  - bootc
+  - tools
+  - infrastructure
+
+repository: https:/github.com/osbuild/image-builder-collection
+documentation: https:/github.com/osbuild/image-builder-collection
+homepage: https:/github.com/osbuild/image-builder-collection
+issues: https:/github.com/osbuild/image-builder-collection/issues
+
+dependencies:
+  "containers.podman": ">=1.0.0"

@@ -1,0 +1,9 @@
+# https://www.osbuild.org/guides/blueprint-reference/blueprint-reference.html
+
+name = "example-packages"
+
+[[packages]]
+name = "bash-completion"
+
+[[packages]]
+name = "vim-enhanced"

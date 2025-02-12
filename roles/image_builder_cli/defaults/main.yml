@@ -1,0 +1,42 @@
+---
+# Tasks
+image_builder_cli_do_setup: true
+image_builder_cli_do_build: true
+
+# Setup
+image_builder_cli_version: latest
+image_builder_cli_output_path: /var/tmp/image-builder-cli-output
+image_builder_cli_repo_path: /var/tmp/image-builder-cli-repos
+image_builder_cli_update_host: false
+
+# Blueprint git repository
+image_builder_cli_git_remote_repo: file:///tmp/rhel-image-blueprints.git
+image_builder_cli_git_repo_checkout: main
+image_builder_cli_blueprint_filename: base-image.toml
+image_builder_cli_local_repo_path: /var/tmp/image-builder-cli-blueprint-repo
+#image_builder_cli_git_key_file:
+
+# Additional blueprint configuration
+image_builder_cli_distro: fedora-40
+image_builder_cli_output_type: minimal-raw
+image_builder_cli_dry_run: false
+
+# Optional repository setup for Satellite/Capsule
+image_builder_cli_use_satellite: false
+# Repo versions to enable using build host config
+image_builder_cli_repo_versions:
+#  - "{{ ansible_facts.distribution_major_version }}"
+#  - "{{ ansible_facts.distribution_major_version }}.8"
+# Custom repository configuration templates to copy
+image_builder_cli_repo_templates:
+#  - rhel-92.json.j2
+#  - rhel-94.json.j2
+# Reboot host in order to workaround a repository update problem.
+# See https://access.redhat.com/solutions/5773421
+# TODO: is this still needed?
+image_builder_cli_reboot_host: false
+
+# Fetch from build host to host running playbook
+image_builder_cli_fetch_directory: /var/tmp/images
+image_builder_cli_fetch_image: false
+image_builder_cli_remote_delete: false

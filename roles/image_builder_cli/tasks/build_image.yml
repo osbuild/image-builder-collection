@@ -1,0 +1,49 @@
+---
+- name: Create output directory
+  file:
+    path: "{{ image_builder_cli_output_path }}"
+    state: directory
+    mode: '0750'
+
+- name: Remove earlier image blueprint repo clone
+  file:
+    path: "{{ image_builder_cli_local_repo_path }}"
+    state: absent
+
+- name: Clone image blueprint repo
+  git:
+    repo: "{{ image_builder_cli_git_remote_repo }}"
+    dest: "{{ image_builder_cli_local_repo_path }}"
+    version: "{{ image_builder_cli_git_repo_checkout }}"
+    key_file: "{{ image_builder_cli_git_key_file | default(omit) }}"
+    accept_newhostkey: true
+    depth: 1
+
+- name: Build the image (takes a while)
+  vars:
+    blueprint: "{{ image_builder_cli_local_repo_path }}/{{ image_builder_cli_blueprint_filename }}"
+    dry_run_prefix: "{{ image_builder_cli_dry_run | ternary('echo', '') }}"
+  become: true
+  command: >
+    {{ dry_run_prefix }} podman run --privileged --rm \
+      -v {{ image_builder_cli_output_path }}:/output:Z \
+      -v {{ blueprint }}:{{ blueprint }}:ro,Z \
+      ghcr.io/osbuild/image-builder-cli:latest build \
+      --distro {{ image_builder_cli_distro }} \
+      --blueprint {{ blueprint }} \
+      {{ image_builder_cli_output_type }}
+  register: build_command_output
+  changed_when: "build_command_output.rc == 0"
+  async: 10000 # 3 hours timeout
+  poll: 30
+
+- name: Write the stdout to a log file
+  copy:
+    content: "{{ build_command_output.stdout }}"
+    dest: "{{ image_builder_cli_output_path }}/stdout_output.log"
+    mode: '0640'
+
+- name: Remove image blueprint repo clone
+  file:
+    path: "{{ image_builder_cli_local_repo_path }}"
+    state: absent
