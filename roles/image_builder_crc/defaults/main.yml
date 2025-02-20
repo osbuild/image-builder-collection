@@ -10,4 +10,4 @@ image_builder_force_create: false
 image_builder_insights_enabled: true
 image_builder_rhc_enabled: true
 image_builder_subscription: {}
-image_builder_retries: 10
+image_builder_retries: 99
