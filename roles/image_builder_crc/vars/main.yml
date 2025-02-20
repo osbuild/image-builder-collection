@@ -1,0 +1,3 @@
+---
+# vars file for rh-console-imagebuilder
+imagebuilder_max_elapsed: 21600

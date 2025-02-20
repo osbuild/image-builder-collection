@@ -1,0 +1,148 @@
+---
+# tasks file for rh-console-imagebuilder
+
+# get access token using offline token
+- name: Get access token
+  ansible.builtin.uri:
+    method: POST
+    body:
+      grant_type: refresh_token
+      client_id: rhsm-api
+      refresh_token: "{{ rhsm_offline_token | default(lookup('env', 'REDHAT_API_OFFLINE_TOKEN')) }}"
+    body_format: form-urlencoded
+    url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+  register: access_token_request
+
+- name: Set fact for access token
+  ansible.builtin.set_fact:
+    rhsm_access_token: "{{ access_token_request.json.access_token }}"
+
+
+# check for existing compose jobs
+# if one exists with name == imagebuilder_image_name, set facts for compose id and create date
+# skip if imagebuilder_force_create is set to true
+- name: Check for matching existing compose jobs
+  when: not imagebuilder_force_create
+  block:
+    - name: Get existing compose jobs
+      ansible.builtin.uri:
+        headers:
+          Authorization: "Bearer {{ rhsm_access_token }}"
+        url: "https://console.redhat.com/api/image-builder/v1/composes"
+      register: imagebuilder_existing_composes
+
+    - name: Set fact for first existing compose id/create timestamp
+      ansible.builtin.set_fact:
+        imagebuilder_compose_id: "{{ imagebuilder_existing_composes.json | community.general.json_query(imagebuilder_name_query) }}"
+        imagebuilder_first_matching_compose_created_at: "{{ imagebuilder_existing_composes.json | community.general.json_query(imagebuilder_create_query) }}"
+      vars:
+        imagebuilder_name_query: "data[?image_name=='{{ imagebuilder_image_name }}'].id | [0]"
+        imagebuilder_create_query: "data[?image_name=='{{ imagebuilder_image_name }}'].created_at | [0]"
+
+    # had to do this separate because it relies on a fact from above
+    - name: Set fact for first existing compose elapsed time
+      when: imagebuilder_compose_id | length > 0
+      ansible.builtin.set_fact:
+        imagebuilder_first_matching_compose_elapsed_seconds: "{{ (now(true) - (imagebuilder_first_matching_compose_created_at | to_datetime(datetime_format))).seconds }}"
+      vars:
+        datetime_format: "%Y-%m-%dT%H:%M:%SZ"
+
+# build new image if:
+# existing image is expired
+# imagebuilder_force_create is set to true
+# no existing image exists
+- name: Build new image
+  when: imagebuilder_force_create or
+        (imagebuilder_compose_id | length == 0) or
+        (imagebuilder_first_matching_compose_elapsed_seconds is defined and (imagebuilder_first_matching_compose_elapsed_seconds | int) > imagebuilder_max_elapsed)
+  block:
+    # import upload request tasks
+    - name: Setup upload request
+      ansible.builtin.import_tasks:
+        file: upload_request.yml
+
+    # import customization tasks
+    - name: Setup customizations
+      ansible.builtin.import_tasks:
+        file: customizations.yml
+
+    - name: Prepare request body
+      ansible.builtin.set_fact:
+        imagebuilder_post_body:
+          distribution: "{{ imagebuilder_distribution }}"
+          image_name: "{{ imagebuilder_image_name }}"
+          image_requests:
+            - architecture: "{{ imagebuilder_architecture }}"
+              image_type: "{{ imagebuilder_image_type }}"
+              upload_request: "{{ imagebuilder_upload_request }}"
+          customizations: "{{ imagebuilder_customizations }}"
+
+    - name: Print request body
+      debug:
+        msg: "{{ imagebuilder_post_body }}"
+
+    - name: Start build process
+      ansible.builtin.uri:
+        method: POST
+        body: "{{ imagebuilder_post_body }}"
+        body_format: json
+        url: https://console.redhat.com/api/image-builder/v1/compose
+        headers:
+          Authorization: "Bearer {{ rhsm_access_token }}"
+        status_code: 201
+      register: imagebuilder_compose_response
+
+    - name: Set fact for image id
+      ansible.builtin.set_fact:
+        imagebuilder_compose_id: "{{ imagebuilder_compose_response.json.id }}"
+
+# get initial compose status
+- name: Check status of existing compose
+  ansible.builtin.uri:
+    headers:
+      Authorization: "Bearer {{ rhsm_access_token }}"
+    url: "https://console.redhat.com/api/image-builder/v1/composes/{{ imagebuilder_compose_id }}"
+  register: imagebuilder_compose_status
+
+# wait for pending and update status var if necessary
+- name: Handle pending status
+  when: imagebuilder_compose_status.json.image_status.status == "pending"
+  block:
+    - name: Build is pending, waiting for next stage
+      ansible.builtin.uri:
+        headers:
+          Authorization: "Bearer {{ rhsm_access_token }}"
+        url: "https://console.redhat.com/api/image-builder/v1/composes/{{ imagebuilder_compose_id }}"
+      register: imagebuilder_compose_pending
+      until: imagebuilder_compose_pending.json.image_status.status != "pending"
+      retries: 10
+      delay: 30
+
+    - name: Set fact for image id
+      ansible.builtin.set_fact:
+        imagebuilder_compose_status: "{{ imagebuilder_compose_pending }}"
+
+# wait for building and update status var if necessary
+- name: Handle building status
+  when: imagebuilder_compose_status.json.image_status.status == "building"
+  block:
+    - name: Image is building, waiting for next stage
+      ansible.builtin.uri:
+        headers:
+          Authorization: "Bearer {{ rhsm_access_token }}"
+        url: "https://console.redhat.com/api/image-builder/v1/composes/{{ imagebuilder_compose_id }}"
+      register: imagebuilder_compose_building
+      until: imagebuilder_compose_building.json.image_status.status != "building"
+      retries: "{{ imagebuilder_retries }}"
+      delay: 30
+
+    - name: Set fact for image id
+      ansible.builtin.set_fact:
+        imagebuilder_compose_status: "{{ imagebuilder_compose_building }}"
+
+- name: Get meta data
+  ansible.builtin.uri:
+    headers:
+      Authorization: "Bearer {{ rhsm_access_token }}"
+    url: "https://console.redhat.com/api/image-builder/v1/openapi.json"
+...

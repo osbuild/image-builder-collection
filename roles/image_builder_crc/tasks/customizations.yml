@@ -1,0 +1,21 @@
+---
+- name: "Setup customizations: Activation Key"
+  when: imagebuilder_activation_key is defined
+  ansible.builtin.set_fact:
+    imagebuilder_subscription:
+      activation-key: "{{ imagebuilder_activation_key }}"
+      insights: "{{ imagebuilder_insights_enabled }}"
+      rhc: "{{ imagebuilder_rhc_enabled }}"
+      server-url: "subscription.rhsm.redhat.com"
+      base-url: "https://cdn.redhat.com/"
+      organization: "{{ imagebuilder_organization_id }}"
+
+- name: "Setup customizations: default"
+  when: imagebuilder_customizations is not defined
+  ansible.builtin.set_fact:
+    imagebuilder_customizations:
+      packages: "{{ imagebuilder_image_packages }}"
+      filesystem: "{{ imagebuilder_custom_filesystem }}"
+      subscription: "{{ imagebuilder_subscription | default(omit) }}"
+      users: "{{ imagebuilder_users | default(omit) }}"
+...

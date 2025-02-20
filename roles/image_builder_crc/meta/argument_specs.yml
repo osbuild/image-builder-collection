@@ -1,0 +1,63 @@
+---
+argument_specs:
+  main:
+    short_description: Ansible role to utilize Red Hat Image Builder from console.redhat.com.
+    options:
+      imagebuilder_architecture:
+        description: Desired architecture for your image
+        type: str
+        required: false
+        default: x86_64
+        choices:
+          - x86_64
+          - aarch64
+
+      imagebuilder_image_type:
+        description: Desired image type
+        type: str
+        required: true
+        choices:
+          - aws
+          - azure
+          - edge-commit
+          - edge-installer
+          - gcp
+          - guest-image
+          - image-installer
+          - vsphere
+          - vsphere-ova
+          - ami
+          - rhel-edge-commit
+          - rhel-edge-installer
+          - vhd
+
+      imagebuilder_image_name:
+        description: Name of new image
+        type: str
+        required: true
+
+      imagebuilder_distribution:
+        description: Distribution version for new image
+        type: str
+        required: false
+        default: rhel-9
+        choices:
+          - rhel-8
+          - rhel-84
+          - rhel-85
+          - rhel-86
+          - rhel-87
+          - rhel-9
+          - rhel-90
+          - rhel-91
+          - centos-8
+          - centos-9
+          - fedora-35
+          - fedora-36
+          - fedora-37
+          - fedora-38
+
+      rhsm_offline_token:
+        description: 'Offline API token for interacting with Red Hat Subscription Manager APIs, can also be declared as environment variable: REDHAT_API_OFFLINE_TOKEN'
+        type: str
+        required: false
