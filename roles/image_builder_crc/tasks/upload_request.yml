@@ -1,72 +1,71 @@
 ---
 # aws
 - name: "Setup upload request: AWS"
-  when: imagebuilder_image_type == "aws"
+  when: image_builder_image_type == "aws"
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "aws"
       options:
         share_with_accounts:
-          - "{{ imagebuilder_aws_account_number | string }}"
+          - "{{ image_builder_aws_account_number | string }}"
 
 # gcp
 - name: "Setup upload request: GCP"
-  when: imagebuilder_image_type == "gcp" and
-        imagebuilder_gcp_user is defined
+  when: image_builder_image_type == "gcp" and
+        image_builder_gcp_user is defined
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "gcp"
       options:
         share_with_accounts:
-          user: "{{ imagebuilder_gcp_user }}"
+          user: "{{ image_builder_gcp_user }}"
 
 - name: "Setup upload request: GCP"
-  when: imagebuilder_image_type == "gcp" and
-        imagebuilder_gcp_service_account is defined
+  when: image_builder_image_type == "gcp" and
+        image_builder_gcp_service_account is defined
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "gcp"
       options:
         share_with_accounts:
-          serviceAccount: "{{ imagebuilder_gcp_service_account }}"
+          serviceAccount: "{{ image_builder_gcp_service_account }}"
 
 - name: "Setup upload request: GCP"
-  when: imagebuilder_image_type == "gcp" and
-        imagebuilder_gcp_group is defined
+  when: image_builder_image_type == "gcp" and
+        image_builder_gcp_group is defined
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "gcp"
       options:
         share_with_accounts:
-          group: "{{ imagebuilder_gcp_group }}"
+          group: "{{ image_builder_gcp_group }}"
 
 - name: "Setup upload request: GCP"
-  when: imagebuilder_image_type == "gcp" and
-        imagebuilder_gcp_domain is defined
+  when: image_builder_image_type == "gcp" and
+        image_builder_gcp_domain is defined
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "gcp"
       options:
         share_with_accounts:
-          domain: "{{ imagebuilder_gcp_domain }}"
+          domain: "{{ image_builder_gcp_domain }}"
 
 # azure
 - name: "Setup upload request: Azure"
-  when: imagebuilder_image_type == "azure"
+  when: image_builder_image_type == "azure"
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: "azure"
       options:
-        image_name: "{{ imagebuilder_image_name }}"
-        resource_group: "{{ imagebuilder_azure_resource_group }}"
-        subscription_id: "{{ imagebuilder_azure_subscription_id }}"
-        tenant_id: "{{ imagebuilder_azure_tenant_id }}"
+        image_name: "{{ image_builder_image_name }}"
+        resource_group: "{{ image_builder_azure_resource_group }}"
+        subscription_id: "{{ image_builder_azure_subscription_id }}"
+        tenant_id: "{{ image_builder_azure_tenant_id }}"
 
 # default
 - name: "Setup upload request: default"
-  when: imagebuilder_upload_request is not defined
+  when: image_builder_upload_request is not defined
   ansible.builtin.set_fact:
-    imagebuilder_upload_request:
+    image_builder_upload_request:
       type: aws.s3
       options: {}
-...

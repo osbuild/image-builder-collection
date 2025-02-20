@@ -10,6 +10,10 @@ managing the pipelines and building the images. The tool is a command-line clien
 
 See [osbuild.image_builder.image_builder_cli](roles/image_builder_cli)
 
+## osbuild.image_builder.image_builder_crc
+
+See [osbuild.image_builder.image_builder_crc](roles/image_builder_crc)
+
 ## Contributors
 
 Much of the code was adopted from the following roles or collections, thank you very much:
@@ -19,3 +23,10 @@ Much of the code was adopted from the following roles or collections, thank you 
 * https://github.com/theforeman/foreman-operations-collection
 
 See Ansible metadata for full list of authors.
+
+## TODO
+
+* Service account support
+* Use side git repo with JSON blueprint
+* Make use of the common blueprint (YAML) and Makefile in git to convert into YAML/JSON
+* Talk to avitova about the convertor

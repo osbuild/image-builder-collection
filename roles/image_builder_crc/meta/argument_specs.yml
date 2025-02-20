@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: Ansible role to utilize Red Hat Image Builder from console.redhat.com.
     options:
-      imagebuilder_architecture:
+      image_builder_architecture:
         description: Desired architecture for your image
         type: str
         required: false
@@ -12,7 +12,7 @@ argument_specs:
           - x86_64
           - aarch64
 
-      imagebuilder_image_type:
+      image_builder_image_type:
         description: Desired image type
         type: str
         required: true
@@ -31,12 +31,12 @@ argument_specs:
           - rhel-edge-installer
           - vhd
 
-      imagebuilder_image_name:
+      image_builder_image_name:
         description: Name of new image
         type: str
         required: true
 
-      imagebuilder_distribution:
+      image_builder_distribution:
         description: Distribution version for new image
         type: str
         required: false
@@ -57,7 +57,7 @@ argument_specs:
           - fedora-37
           - fedora-38
 
-      rhsm_offline_token:
+      image_builder_rhsm_offline_token:
         description: 'Offline API token for interacting with Red Hat Subscription Manager APIs, can also be declared as environment variable: REDHAT_API_OFFLINE_TOKEN'
         type: str
         required: false

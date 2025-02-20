@@ -1,8 +1,7 @@
 ---
-enable_list:
-  - only-builtins
 skip_list:
   - var-naming[no-role-prefix]
+  - galaxy[no-changelog]
 var_naming_pattern: "^(__)?image_builder_[a-z_][a-z0-9_]*$"
 exclude_paths:
   - meta/runtime.yml

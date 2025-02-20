@@ -14,7 +14,7 @@ image_builder_cli_git_remote_repo: file:///tmp/rhel-image-blueprints.git
 image_builder_cli_git_repo_checkout: main
 image_builder_cli_blueprint_filename: base-image.toml
 image_builder_cli_local_repo_path: /var/tmp/image-builder-cli-blueprint-repo
-#image_builder_cli_git_key_file:
+# image_builder_cli_git_key_file:
 
 # Additional blueprint configuration
 image_builder_cli_distro: fedora-40

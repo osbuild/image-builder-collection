@@ -1,13 +1,13 @@
 ---
 - name: Update output directory permissions
-  file:
+  ansible.builtin.file:
     path: "{{ image_builder_cli_output_path }}"
     mode: '0750'
     recurse: true
   when: "'SUDO_USER' in ansible_facts.env"
 
 - name: Update output file permissions
-  file:
+  ansible.builtin.file:
     path: "{{ image_builder_cli_output_path }}"
     owner: "{{ ansible_facts.env.SUDO_USER }}"
     mode: '0600'
@@ -15,25 +15,25 @@
   when: "'SUDO_USER' in ansible_facts.env"
 
 - name: Find files on build host to fetch
-  find:
+  ansible.builtin.find:
     paths: "{{ image_builder_cli_output_path }}"
-    recurse: yes
-  register: files_to_fetch
+    recurse: true
+  register: image_builder_files_to_fetch
 
 - name: Fetch image file from build host
   become: false # do not remove this
-  fetch:
+  ansible.builtin.fetch:
     src: "{{ item.path }}"
     dest: "{{ image_builder_cli_fetch_directory }}/"
     flat: true
-  with_items: "{{ files_to_fetch.files }}"
+  with_items: "{{ image_builder_files_to_fetch.files }}"
 
 - name: Remove output dir on build host
-  file:
+  ansible.builtin.file:
     path: "{{ image_builder_cli_output_path }}"
     state: absent
   when: image_builder_cli_remote_delete | bool
 
 - name: Print build artifacts
-  debug:
-    msg: "Fetched the following files into {{ image_builder_cli_fetch_directory }}:\n{{ files_to_fetch.files | map(attribute='path') | list }}"
+  ansible.builtin.debug:
+    msg: "Fetched the following files into {{ image_builder_cli_fetch_directory }}:\n{{ image_builder_files_to_fetch.files | map(attribute='path') | list }}"

@@ -2,14 +2,14 @@
 - name: Build an image
   hosts: all
   vars:
-    #image_builder_cli_git_remote_repo: https://github.com/osbuild/image-builder-collection
+    # image_builder_cli_git_remote_repo: https://github.com/osbuild/image-builder-collection
     image_builder_cli_git_remote_repo: https://gist.github.com/lzap/0586da58ca24144de06503fa4ed811f3
-    #image_builder_cli_blueprint_filename: example-packages.toml
+    # image_builder_cli_blueprint_filename: example-packages.toml
     image_builder_cli_blueprint_filename: example.toml
 
     image_builder_cli_distro: fedora-40
     image_builder_cli_output_type: minimal-raw
-    image_builder_cli_dry_run: false
+    image_builder_cli_dry_run: true
 
     image_builder_cli_fetch_image: true
     image_builder_cli_remote_delete: false

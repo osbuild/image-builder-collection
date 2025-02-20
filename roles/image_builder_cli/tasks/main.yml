@@ -1,12 +1,12 @@
 ---
 - name: Setup Image Builder
-  include_tasks: builder_setup.yml
+  ansible.builtin.include_tasks: builder_setup.yml
   when: image_builder_cli_do_setup | bool
 
 - name: Build image
-  include_tasks: build_image.yml
+  ansible.builtin.include_tasks: build_image.yml
   when: image_builder_cli_do_build | bool
 
 - name: Fetch image
-  include_tasks: fetch_image.yml
+  ansible.builtin.include_tasks: fetch_image.yml
   when: image_builder_cli_fetch_image | bool

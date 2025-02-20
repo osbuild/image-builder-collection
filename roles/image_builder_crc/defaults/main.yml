@@ -1,13 +1,13 @@
 ---
-# defaults file for rh-console-imagebuilder
-imagebuilder_custom_filesystem: []
-imagebuilder_architecture: x86_64
-imagebuilder_dest_folder: /tmp
-imagebuilder_download_file: false
-imagebuilder_distribution: rhel-9
-imagebuilder_image_packages: []
-imagebuilder_force_create: false
-imagebuilder_insights_enabled: true
-imagebuilder_rhc_enabled: true
-imagebuilder_subscription: {}
-imagebuilder_retries: 10
+# defaults file for rh-console-image_builder
+image_builder_custom_filesystem: []
+image_builder_architecture: x86_64
+image_builder_dest_folder: /tmp
+image_builder_download_file: false
+image_builder_distribution: rhel-9
+image_builder_image_packages: []
+image_builder_force_create: false
+image_builder_insights_enabled: true
+image_builder_rhc_enabled: true
+image_builder_subscription: {}
+image_builder_retries: 10
