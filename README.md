@@ -29,4 +29,3 @@ See Ansible metadata for full list of authors.
 * Service account support
 * Use side git repo with JSON blueprint
 * Make use of the common blueprint (YAML) and Makefile in git to convert into YAML/JSON
-* Talk to avitova about the convertor

@@ -52,7 +52,7 @@ And wait, until Ansible completes the build and fetches the image into `/var/tmp
 
 ## Variables
 
-See [defaults](roles/image_builder_cli/defaults/main.yml) variables.
+See [defaults](defaults/main.yml) variables.
 
 ## Distributions and image types
 
