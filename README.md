@@ -16,11 +16,12 @@ See [osbuild.image_builder.image_builder_crc](roles/image_builder_crc)
 
 ## Contributors
 
-Much of the code was adopted from the following roles or collections, thank you very much:
+Some of the code was adopted from other projects:
 
 * https://github.com/brianaddicks/rh_console_imagebuilder 
 * https://github.com/myllynen/rhel-image
 * https://github.com/theforeman/foreman-operations-collection
+* https://github.com/enothen/ansible-image-builder
 
 See Ansible metadata for full list of authors.
 
